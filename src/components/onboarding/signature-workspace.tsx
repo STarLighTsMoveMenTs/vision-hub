@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState, type FormEvent } from "react";
+import { useMemo, useRef, useState, type FormEvent, type PointerEvent } from "react";
 import { CheckCircle2, FileSignature, ListChecks } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -35,13 +35,13 @@ export function SignatureWorkspace({ role, variant = "role" }: WorkspaceProps) {
   const filteredModules = useMemo(() => publicModules.filter((module) => module.audience.includes(roleLabels[role]) || module.audience.includes("Alle Rollen") || variant !== "role"), [role, variant]);
   const visibleModules = filteredModules.length > 0 ? filteredModules : publicModules.slice(0, 4);
 
-  const point = (event: React.PointerEvent<HTMLCanvasElement>) => {
+  const point = (event: PointerEvent<HTMLCanvasElement>) => {
     const canvas = event.currentTarget;
     const rect = canvas.getBoundingClientRect();
     return { x: event.clientX - rect.left, y: event.clientY - rect.top };
   };
 
-  const startDrawing = (event: React.PointerEvent<HTMLCanvasElement>) => {
+  const startDrawing = (event: PointerEvent<HTMLCanvasElement>) => {
     drawing.current = true;
     const ctx = event.currentTarget.getContext("2d");
     if (!ctx) return;
@@ -50,7 +50,7 @@ export function SignatureWorkspace({ role, variant = "role" }: WorkspaceProps) {
     ctx.moveTo(p.x, p.y);
   };
 
-  const draw = (event: React.PointerEvent<HTMLCanvasElement>) => {
+  const draw = (event: PointerEvent<HTMLCanvasElement>) => {
     if (!drawing.current) return;
     const ctx = event.currentTarget.getContext("2d");
     if (!ctx) return;
