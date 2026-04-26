@@ -9,8 +9,56 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TeamRouteImport } from './routes/team'
+import { Route as PartnerRouteImport } from './routes/partner'
+import { Route as MitarbeiterRouteImport } from './routes/mitarbeiter'
+import { Route as ManagementRouteImport } from './routes/management'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as KollegenRouteImport } from './routes/kollegen'
+import { Route as BewerberRouteImport } from './routes/bewerber'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 
+const TeamRoute = TeamRouteImport.update({
+  id: '/team',
+  path: '/team',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PartnerRoute = PartnerRouteImport.update({
+  id: '/partner',
+  path: '/partner',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MitarbeiterRoute = MitarbeiterRouteImport.update({
+  id: '/mitarbeiter',
+  path: '/mitarbeiter',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ManagementRoute = ManagementRouteImport.update({
+  id: '/management',
+  path: '/management',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KollegenRoute = KollegenRouteImport.update({
+  id: '/kollegen',
+  path: '/kollegen',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BewerberRoute = BewerberRouteImport.update({
+  id: '/bewerber',
+  path: '/bewerber',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +67,144 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/bewerber': typeof BewerberRoute
+  '/kollegen': typeof KollegenRoute
+  '/login': typeof LoginRoute
+  '/management': typeof ManagementRoute
+  '/mitarbeiter': typeof MitarbeiterRoute
+  '/partner': typeof PartnerRoute
+  '/team': typeof TeamRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/bewerber': typeof BewerberRoute
+  '/kollegen': typeof KollegenRoute
+  '/login': typeof LoginRoute
+  '/management': typeof ManagementRoute
+  '/mitarbeiter': typeof MitarbeiterRoute
+  '/partner': typeof PartnerRoute
+  '/team': typeof TeamRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/bewerber': typeof BewerberRoute
+  '/kollegen': typeof KollegenRoute
+  '/login': typeof LoginRoute
+  '/management': typeof ManagementRoute
+  '/mitarbeiter': typeof MitarbeiterRoute
+  '/partner': typeof PartnerRoute
+  '/team': typeof TeamRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/bewerber'
+    | '/kollegen'
+    | '/login'
+    | '/management'
+    | '/mitarbeiter'
+    | '/partner'
+    | '/team'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/admin'
+    | '/bewerber'
+    | '/kollegen'
+    | '/login'
+    | '/management'
+    | '/mitarbeiter'
+    | '/partner'
+    | '/team'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/bewerber'
+    | '/kollegen'
+    | '/login'
+    | '/management'
+    | '/mitarbeiter'
+    | '/partner'
+    | '/team'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
+  BewerberRoute: typeof BewerberRoute
+  KollegenRoute: typeof KollegenRoute
+  LoginRoute: typeof LoginRoute
+  ManagementRoute: typeof ManagementRoute
+  MitarbeiterRoute: typeof MitarbeiterRoute
+  PartnerRoute: typeof PartnerRoute
+  TeamRoute: typeof TeamRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/team': {
+      id: '/team'
+      path: '/team'
+      fullPath: '/team'
+      preLoaderRoute: typeof TeamRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/partner': {
+      id: '/partner'
+      path: '/partner'
+      fullPath: '/partner'
+      preLoaderRoute: typeof PartnerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mitarbeiter': {
+      id: '/mitarbeiter'
+      path: '/mitarbeiter'
+      fullPath: '/mitarbeiter'
+      preLoaderRoute: typeof MitarbeiterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/management': {
+      id: '/management'
+      path: '/management'
+      fullPath: '/management'
+      preLoaderRoute: typeof ManagementRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kollegen': {
+      id: '/kollegen'
+      path: '/kollegen'
+      fullPath: '/kollegen'
+      preLoaderRoute: typeof KollegenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bewerber': {
+      id: '/bewerber'
+      path: '/bewerber'
+      fullPath: '/bewerber'
+      preLoaderRoute: typeof BewerberRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,6 +217,14 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
+  BewerberRoute: BewerberRoute,
+  KollegenRoute: KollegenRoute,
+  LoginRoute: LoginRoute,
+  ManagementRoute: ManagementRoute,
+  MitarbeiterRoute: MitarbeiterRoute,
+  PartnerRoute: PartnerRoute,
+  TeamRoute: TeamRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
