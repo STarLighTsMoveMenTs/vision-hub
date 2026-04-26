@@ -127,9 +127,13 @@ export type Database = {
           form_data: Json
           id: string
           kind: Database["public"]["Enums"]["form_kind"]
+          review_notes: string | null
+          review_status: Database["public"]["Enums"]["form_review_status"]
+          reviewed_at: string | null
           reviewed_by: string | null
           status: Database["public"]["Enums"]["assignment_status"]
           submitted_at: string | null
+          submitted_by_role: Database["public"]["Enums"]["app_role"] | null
           updated_at: string
           user_id: string
         }
@@ -138,9 +142,13 @@ export type Database = {
           form_data?: Json
           id?: string
           kind: Database["public"]["Enums"]["form_kind"]
+          review_notes?: string | null
+          review_status?: Database["public"]["Enums"]["form_review_status"]
+          reviewed_at?: string | null
           reviewed_by?: string | null
           status?: Database["public"]["Enums"]["assignment_status"]
           submitted_at?: string | null
+          submitted_by_role?: Database["public"]["Enums"]["app_role"] | null
           updated_at?: string
           user_id: string
         }
@@ -149,9 +157,13 @@ export type Database = {
           form_data?: Json
           id?: string
           kind?: Database["public"]["Enums"]["form_kind"]
+          review_notes?: string | null
+          review_status?: Database["public"]["Enums"]["form_review_status"]
+          reviewed_at?: string | null
           reviewed_by?: string | null
           status?: Database["public"]["Enums"]["assignment_status"]
           submitted_at?: string | null
+          submitted_by_role?: Database["public"]["Enums"]["app_role"] | null
           updated_at?: string
           user_id?: string
         }
@@ -165,12 +177,16 @@ export type Database = {
           id: string
           is_public_teaser: boolean
           key_points: string[]
+          public_summary: string | null
+          public_teaser_updated_at: string | null
+          released_roles: Database["public"]["Enums"]["app_role"][]
           slug: string
           status: Database["public"]["Enums"]["onboarding_status"]
           summary: string
           title: string
           updated_at: string
           version: string
+          visibility_scope: Database["public"]["Enums"]["module_visibility_scope"]
         }
         Insert: {
           audience_roles?: Database["public"]["Enums"]["app_role"][]
@@ -179,12 +195,16 @@ export type Database = {
           id?: string
           is_public_teaser?: boolean
           key_points?: string[]
+          public_summary?: string | null
+          public_teaser_updated_at?: string | null
+          released_roles?: Database["public"]["Enums"]["app_role"][]
           slug: string
           status?: Database["public"]["Enums"]["onboarding_status"]
           summary: string
           title: string
           updated_at?: string
           version?: string
+          visibility_scope?: Database["public"]["Enums"]["module_visibility_scope"]
         }
         Update: {
           audience_roles?: Database["public"]["Enums"]["app_role"][]
@@ -193,44 +213,69 @@ export type Database = {
           id?: string
           is_public_teaser?: boolean
           key_points?: string[]
+          public_summary?: string | null
+          public_teaser_updated_at?: string | null
+          released_roles?: Database["public"]["Enums"]["app_role"][]
           slug?: string
           status?: Database["public"]["Enums"]["onboarding_status"]
           summary?: string
           title?: string
           updated_at?: string
           version?: string
+          visibility_scope?: Database["public"]["Enums"]["module_visibility_scope"]
         }
         Relationships: []
       }
       profiles: {
         Row: {
+          age: number | null
           created_at: string
+          first_name: string | null
           full_name: string
           id: string
+          intake_completed: boolean
+          integration_request: string | null
+          last_name: string | null
+          linkedin_url: string | null
           onboarding_status: Database["public"]["Enums"]["assignment_status"]
           organization: string | null
+          phone: string | null
           position_title: string | null
           team_name: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
+          age?: number | null
           created_at?: string
+          first_name?: string | null
           full_name?: string
           id?: string
+          intake_completed?: boolean
+          integration_request?: string | null
+          last_name?: string | null
+          linkedin_url?: string | null
           onboarding_status?: Database["public"]["Enums"]["assignment_status"]
           organization?: string | null
+          phone?: string | null
           position_title?: string | null
           team_name?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
+          age?: number | null
           created_at?: string
+          first_name?: string | null
           full_name?: string
           id?: string
+          intake_completed?: boolean
+          integration_request?: string | null
+          last_name?: string | null
+          linkedin_url?: string | null
           onboarding_status?: Database["public"]["Enums"]["assignment_status"]
           organization?: string | null
+          phone?: string | null
           position_title?: string | null
           team_name?: string | null
           updated_at?: string
@@ -272,6 +317,7 @@ export type Database = {
         Returns: boolean
       }
       is_management_or_admin: { Args: { _user_id: string }; Returns: boolean }
+      refresh_overdue_assignments: { Args: never; Returns: number }
     }
     Enums: {
       app_role:
@@ -284,6 +330,14 @@ export type Database = {
         | "applicant"
       assignment_status: "open" | "in_progress" | "signed" | "overdue"
       form_kind: "applicant" | "partner" | "employee" | "team" | "management"
+      form_review_status:
+        | "draft"
+        | "submitted"
+        | "in_review"
+        | "approved"
+        | "rejected"
+        | "changes_requested"
+      module_visibility_scope: "internal" | "external" | "both"
       onboarding_status: "draft" | "active" | "archived"
     }
     CompositeTypes: {
@@ -423,6 +477,15 @@ export const Constants = {
       ],
       assignment_status: ["open", "in_progress", "signed", "overdue"],
       form_kind: ["applicant", "partner", "employee", "team", "management"],
+      form_review_status: [
+        "draft",
+        "submitted",
+        "in_review",
+        "approved",
+        "rejected",
+        "changes_requested",
+      ],
+      module_visibility_scope: ["internal", "external", "both"],
       onboarding_status: ["draft", "active", "archived"],
     },
   },
