@@ -39,11 +39,13 @@ type ModuleRecord = {
   slug: string;
   summary: string;
   public_summary?: string | null;
+  public_teaser_updated_at?: string | null;
   audience?: string;
   audience_roles?: AppRole[];
   released_roles?: AppRole[];
   version?: string;
   status?: string;
+  updated_at?: string;
   visibility_scope?: "internal" | "external" | "both";
   is_public_teaser?: boolean;
 };
