@@ -17,6 +17,25 @@ export function AuthPanel() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const resolveRoleRoute = async (fallbackRole: AppRole) => {
+    const { data: sessionData } = await supabase.auth.getSession();
+    const userId = sessionData.session?.user?.id;
+
+    if (!userId) return roleRoutes[fallbackRole];
+
+    const { data: ownRoles, error } = await (supabase.from("user_roles") as any)
+      .select("role")
+      .eq("user_id", userId);
+
+    if (error) return roleRoutes[fallbackRole];
+
+    const orderedRoles: AppRole[] = ["admin", "management", "team", "colleague", "employee", "partner", "applicant"];
+    const assignedRoles = ((ownRoles ?? []) as Array<{ role: AppRole }>).map((item) => item.role);
+    const matchedRole = orderedRoles.find((item) => assignedRoles.includes(item));
+
+    return roleRoutes[matchedRole ?? fallbackRole];
+  };
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
@@ -52,10 +71,11 @@ export function AuthPanel() {
     const { error } = await supabase.auth.signInWithPassword({ email: cleanEmail, password });
     setLoading(false);
     if (error) {
-      setMessage(error.message);
+      setMessage(error.message.includes("Email not confirmed") ? "Dein Zugang ist angelegt, aber die E-Mail ist noch nicht bestätigt. Öffne den Bestätigungslink in deinem Postfach und logge dich dann erneut ein." : error.message);
       return;
     }
-    navigate({ to: roleRoutes[role] });
+    const nextRoute = await resolveRoleRoute(role);
+    navigate({ to: nextRoute });
   };
 
   return (
@@ -101,11 +121,11 @@ export function AuthPanel() {
             )}
             <label className="block space-y-2 text-sm font-medium">
               E-Mail
-              <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm outline-none ring-offset-background focus:ring-2 focus:ring-ring" maxLength={255} />
+              <input type="email" value={email} onChange={(event) => setEmail(event.target.value)} className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm outline-none ring-offset-background focus:ring-2 focus:ring-ring" maxLength={255} autoComplete="email" />
             </label>
             <label className="block space-y-2 text-sm font-medium">
               Passwort
-              <input type="password" value={password} onChange={(event) => setPassword(event.target.value)} className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm outline-none ring-offset-background focus:ring-2 focus:ring-ring" minLength={8} />
+              <input type="password" value={password} onChange={(event) => setPassword(event.target.value)} className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm outline-none ring-offset-background focus:ring-2 focus:ring-ring" minLength={8} autoComplete={mode === "login" ? "current-password" : "new-password"} />
             </label>
             <label className="block space-y-2 text-sm font-medium">
               Bereich
