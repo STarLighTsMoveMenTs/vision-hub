@@ -524,7 +524,7 @@ export function SignatureWorkspace({ role, variant = "role" }: WorkspaceProps) {
         <div className="mx-auto flex max-w-7xl flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="inline-flex items-center gap-2 rounded-md border border-border bg-card/70 px-3 py-1 text-sm font-medium text-muted-foreground shadow-[var(--shadow-aura)]"><Sparkles className="h-4 w-4 text-primary" />{roleLabels[role]} · Onboarding · {nowStamp}</p>
-            <h1 className="mt-4 max-w-4xl text-4xl font-semibold tracking-tight md:text-6xl">{journey.headline}</h1>
+            <h1 className="metallic-text mt-4 max-w-4xl text-4xl font-semibold tracking-tight md:text-6xl">{journey.headline}</h1>
             <p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground">{journey.focus}</p>
           </div>
           <div className="w-full rounded-lg border border-border bg-card/75 p-4 shadow-[var(--shadow-aura)] backdrop-blur md:w-[420px]">
@@ -545,14 +545,14 @@ export function SignatureWorkspace({ role, variant = "role" }: WorkspaceProps) {
         <section className="space-y-6">
           <div className="grid gap-4 md:grid-cols-3">
             {journey.actions.map((action) => (
-              <div key={action} className="rounded-lg border border-border bg-card/75 p-5 shadow-[var(--shadow-aura)] backdrop-blur">
+              <div key={action} className="glass-panel rounded-lg border p-5">
                 <ListChecks className="h-5 w-5 text-primary" />
                 <p className="mt-4 text-sm font-medium leading-6">{action}</p>
               </div>
             ))}
           </div>
 
-          <section className="rounded-lg border border-border bg-card/75 p-6 shadow-[var(--shadow-aura)] backdrop-blur">
+          <section className="glass-panel rounded-lg border p-6">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="flex items-center gap-3"><BarChart3 className="h-5 w-5 text-primary" /><h2 className="text-xl font-semibold">Rollen-Dashboard</h2></div>
               {loading && <span className="text-sm text-muted-foreground">Synchronisiere…</span>}
@@ -575,7 +575,7 @@ export function SignatureWorkspace({ role, variant = "role" }: WorkspaceProps) {
             </div>
           </section>
 
-          <section className="rounded-lg border border-border bg-card/75 p-6 shadow-[var(--shadow-aura)] backdrop-blur">
+          <section className="glass-panel rounded-lg border p-6">
             <div className="flex items-center gap-3"><CheckCircle2 className="h-5 w-5 text-primary" /><h2 className="text-xl font-semibold">Freigegebene Lernmodule</h2></div>
             <div className="mt-5 grid gap-4 md:grid-cols-2">
               {visibleModules.map((module) => (
@@ -588,7 +588,7 @@ export function SignatureWorkspace({ role, variant = "role" }: WorkspaceProps) {
             </div>
           </section>
 
-          <section className="rounded-lg border border-border bg-card/75 p-6 shadow-[var(--shadow-aura)] backdrop-blur">
+          <section className="glass-panel rounded-lg border p-6">
             <div className="flex items-center gap-3"><Eye className="h-5 w-5 text-primary" /><h2 className="text-xl font-semibold">Öffentliche Kurzversionen</h2></div>
             <div className="mt-5 grid gap-3 md:grid-cols-2">
               {publicShortModules.map((module) => (
@@ -605,7 +605,7 @@ export function SignatureWorkspace({ role, variant = "role" }: WorkspaceProps) {
           </section>
 
           {!profile?.intake_completed && !canManage && (
-            <section className="rounded-lg border border-primary/50 bg-card/80 p-6 shadow-[var(--shadow-gold)] backdrop-blur">
+            <section className="glass-panel rounded-lg border border-primary/50 p-6">
               <div className="flex items-center gap-3"><UserRound className="h-5 w-5 text-primary" /><h2 className="text-xl font-semibold">Integration Request vor Start</h2></div>
               <form onSubmit={submitIntake} className="mt-5 grid gap-4 md:grid-cols-2">
                 <input placeholder="Vorname" value={intake.firstName} onChange={(e) => setIntake({ ...intake, firstName: e.target.value })} className="h-10 rounded-md border border-input bg-background/70 px-3 text-sm" maxLength={80} />
@@ -620,7 +620,7 @@ export function SignatureWorkspace({ role, variant = "role" }: WorkspaceProps) {
           )}
 
           {formRoles.includes(role) && (
-            <section className="rounded-lg border border-border bg-card/75 p-6 shadow-[var(--shadow-aura)] backdrop-blur">
+            <section className="glass-panel rounded-lg border p-6">
               <div className="flex items-center gap-3"><FileText className="h-5 w-5 text-primary" /><h2 className="text-xl font-semibold">Formular-Workflow</h2></div>
               <form onSubmit={submitWorkflowForm} className="mt-5 space-y-4">
                 <textarea value={formText} onChange={(event) => setFormText(event.target.value)} placeholder="Angaben für Review-Phase eintragen" className="min-h-28 w-full rounded-md border border-input bg-background/70 px-3 py-2 text-sm" maxLength={1600} />
@@ -634,7 +634,7 @@ export function SignatureWorkspace({ role, variant = "role" }: WorkspaceProps) {
         </section>
 
         <section className="space-y-6">
-          <section className="rounded-lg border border-border bg-card/80 p-6 shadow-[var(--shadow-aura)] backdrop-blur">
+          <section className="glass-panel rounded-lg border p-6">
             <div className="flex items-center gap-3"><FileSignature className="h-5 w-5 text-primary" /><h2 className="text-xl font-semibold">Einzelnes Modul unterschreiben</h2></div>
             <form onSubmit={submitSignature} className="mt-5 space-y-4">
               <label className="block space-y-2 text-sm font-medium">Name der unterschreibenden Person<input value={signerName} onChange={(event) => setSignerName(event.target.value)} className="h-10 w-full rounded-md border border-input bg-background/70 px-3 text-sm outline-none focus:ring-2 focus:ring-ring" maxLength={120} /></label>
@@ -648,28 +648,28 @@ export function SignatureWorkspace({ role, variant = "role" }: WorkspaceProps) {
 
           {canManage && (
             <>
-              <section className="rounded-lg border border-border bg-card/80 p-6 shadow-[var(--shadow-aura)] backdrop-blur">
+              <section className="glass-panel rounded-lg border p-6">
                 <div className="flex flex-wrap items-center justify-between gap-3"><div className="flex items-center gap-3"><Download className="h-5 w-5 text-primary" /><h2 className="text-xl font-semibold">Signatur-Audit Export</h2></div><div className="flex gap-2"><Button type="button" variant="outline" onClick={exportSignaturesCsv}>CSV</Button><Button type="button" onClick={exportSignaturesPdf}>PDF</Button></div></div>
                 <div className="mt-5 space-y-3">
                   {signatures.slice(0, 6).map((signature) => <div key={signature.id} className="rounded-md border border-border bg-background/55 p-3 text-sm"><p className="font-medium">{signature.signer_name} · {signature.signed_content_title}</p><p className="text-muted-foreground">{formatDate(signature.signed_at)} · {signature.signature_hash.slice(0, 28)}…</p></div>)}
                 </div>
               </section>
 
-              <section className="rounded-lg border border-border bg-card/80 p-6 shadow-[var(--shadow-aura)] backdrop-blur">
+              <section className="glass-panel rounded-lg border p-6">
                 <div className="flex flex-wrap items-center justify-between gap-3"><div className="flex items-center gap-3"><ShieldCheck className="h-5 w-5 text-primary" /><h2 className="text-xl font-semibold">Modul-Freigaben intern/extern</h2></div><div className="rounded-md border border-border bg-background/55 px-3 py-2 text-xs text-muted-foreground">Änderungen aktualisieren die Kurzversion automatisch</div></div>
                 <div className="mt-5 space-y-4">
                   {modules.map((module) => <div key={module.slug} className="rounded-md border border-border bg-background/55 p-4"><div className="flex flex-wrap items-center justify-between gap-3"><p className="font-medium">{module.title}</p><span className="rounded-md border border-border bg-card/70 px-2 py-1 text-[11px] text-muted-foreground">{roleSplitLabel(module)}</span></div><p className="mt-1 text-sm text-muted-foreground">Öffentlich: {module.public_summary || module.summary}</p><div className="mt-3 flex flex-wrap gap-2">{roles.map((item) => <button key={item} type="button" onClick={() => toggleRoleRelease(module, item)} className={`rounded-md border px-2 py-1 text-xs ${(module.released_roles ?? []).includes(item) ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-muted-foreground"}`}>{externalRoles.includes(item) ? "Extern" : "Intern"} · {roleLabels[item]}</button>)}</div></div>)}
                 </div>
               </section>
 
-              <section className="rounded-lg border border-border bg-card/80 p-6 shadow-[var(--shadow-aura)] backdrop-blur">
+              <section className="glass-panel rounded-lg border p-6">
                 <div className="flex items-center gap-3"><CalendarClock className="h-5 w-5 text-primary" /><h2 className="text-xl font-semibold">Fälligkeiten & Overdue</h2></div>
                 <div className="mt-5 space-y-3">
                   {assignments.slice(0, 8).map((assignment) => <div key={assignment.id} className="rounded-md border border-border bg-background/55 p-3"><div className="flex flex-wrap items-center justify-between gap-3"><p className="text-sm font-medium">{moduleTitleById.get(assignment.module_id) ?? "Modul"} · Nutzer {assignment.assigned_to.slice(0, 8)} · {assignment.status}</p>{assignment.status === "overdue" && <span className="rounded-md border border-destructive/50 bg-destructive/10 px-2 py-1 text-[11px] font-medium text-destructive">Overdue</span>}</div><div className="mt-3"><DueDateField value={dateDrafts[assignment.id]?.date ?? (assignment.due_at ? new Date(assignment.due_at) : undefined)} onDateChange={(date) => updateDateDraft(assignment.id, { date })} time={dateDrafts[assignment.id]?.time ?? (assignment.due_at ? new Date(assignment.due_at).toISOString().slice(11, 16) : "09:00")} onTimeChange={(value) => updateDateDraft(assignment.id, { time: value })} onSave={() => saveDateDraft(assignment.id)} /></div><div className="mt-2 flex items-center justify-between text-xs text-muted-foreground"><span>{formatDate(assignment.due_at)}</span><span>{assignmentProgress(assignment.status)}%</span></div><Progress value={assignmentProgress(assignment.status)} className="mt-3" /></div>)}
                 </div>
               </section>
 
-              <section className="rounded-lg border border-border bg-card/80 p-6 shadow-[var(--shadow-aura)] backdrop-blur">
+              <section className="glass-panel rounded-lg border p-6">
                 <div className="flex items-center gap-3"><UsersRound className="h-5 w-5 text-primary" /><h2 className="text-xl font-semibold">Admin Panel: Profile, Review, Lernkurve</h2></div>
                 <div className="mt-5 grid gap-3">
                   {profileProgress.map(({ item, open, inProgress, overdue, signed, total, progress }) => <div key={item.user_id} className="rounded-md border border-border bg-background/55 p-4"><div className="flex flex-wrap items-start justify-between gap-3"><div><p className="font-medium">{item.first_name || item.full_name} {item.last_name ?? ""}</p><p className="text-sm text-muted-foreground">Alter {item.age ?? "—"} · Telefon {item.phone ?? "—"} · LinkedIn {item.linkedin_url ?? "—"}</p></div><div className="rounded-md border border-border bg-card/70 px-3 py-2 text-right text-xs text-muted-foreground"><div>{signed}/{total || 0} signiert</div><div>{progress}% Fortschritt</div></div></div><p className="mt-2 text-sm text-muted-foreground">{item.integration_request ?? "Kein Integration Request"}</p><div className="mt-3 grid gap-2 sm:grid-cols-4"><div className="rounded-md border border-border bg-card/60 p-2 text-xs text-muted-foreground"><div className="text-lg font-semibold text-foreground">{open}</div>Offen</div><div className="rounded-md border border-border bg-card/60 p-2 text-xs text-muted-foreground"><div className="text-lg font-semibold text-foreground">{inProgress}</div>In Arbeit</div><div className="rounded-md border border-border bg-card/60 p-2 text-xs text-muted-foreground"><div className="text-lg font-semibold text-foreground">{signed}</div>Signiert</div><div className="rounded-md border border-border bg-card/60 p-2 text-xs text-muted-foreground"><div className="text-lg font-semibold text-foreground">{overdue}</div>Overdue</div></div><div className="mt-3 flex items-center justify-between text-xs text-muted-foreground"><span>Lernkurve</span><span>{progress}%</span></div><Progress value={progress} className="mt-2" /></div>)}
@@ -682,12 +682,12 @@ export function SignatureWorkspace({ role, variant = "role" }: WorkspaceProps) {
           )}
 
           {!canManage && (
-            <section className="rounded-lg border border-border bg-card/75 p-5 shadow-[var(--shadow-aura)] backdrop-blur">
+            <section className="glass-panel rounded-lg border p-5">
               <div className="flex items-center gap-3 text-sm text-muted-foreground"><Lock className="h-4 w-4 text-primary" />CSV/PDF-Export, Modulfreigaben und Review-Steuerung sind nur für Admin/Management sichtbar.</div>
             </section>
           )}
 
-          <section className="rounded-lg border border-border bg-card/75 p-5 shadow-[var(--shadow-aura)] backdrop-blur">
+          <section className="glass-panel rounded-lg border p-5">
             <div className="grid grid-cols-3 gap-3 text-sm text-muted-foreground"><span className="flex items-center gap-2"><Clock3 className="h-4 w-4 text-primary" />Timestamp</span><span className="flex items-center gap-2"><Zap className="h-4 w-4 text-primary" />Audit</span><span className="flex items-center gap-2"><Sparkles className="h-4 w-4 text-primary" />Aura</span></div>
           </section>
         </section>
