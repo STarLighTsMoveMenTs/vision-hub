@@ -201,16 +201,30 @@
     inset: 0;
     pointer-events: none;
     background:
-      linear-gradient(115deg, transparent 0 40%, oklch(0.78 0.15 82 / 12%) 48%, transparent 56% 100%),
-      radial-gradient(circle at 50% 110%, oklch(0.54 0.09 55 / 28%), transparent 32rem);
+      linear-gradient(115deg, transparent 0 35%, oklch(0.91 0.025 245 / 15%) 42%, oklch(0.78 0.16 86 / 18%) 49%, transparent 58% 100%),
+      radial-gradient(circle at 18% 72%, oklch(0.64 0.17 258 / 24%), transparent 26rem),
+      radial-gradient(circle at 50% 110%, oklch(0.58 0.105 58 / 34%), transparent 32rem);
     mix-blend-mode: screen;
-    animation: aura-shift 9s ease-in-out infinite alternate;
+    animation: aura-shift 7s ease-in-out infinite alternate;
     z-index: 0;
+  }
+
+  .aura-shell::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background:
+      linear-gradient(100deg, transparent 0 44%, oklch(0.95 0.02 95 / 0%) 47%, oklch(0.95 0.02 95 / 22%) 50%, oklch(0.95 0.02 95 / 0%) 54%, transparent 100%),
+      repeating-radial-gradient(circle at 50% 50%, oklch(0.9 0.025 245 / 7%) 0 1px, transparent 2px 9px);
+    animation: glass-sheen 8s linear infinite;
   }
 
   .matrix-rain,
   .star-stream,
-  .lightning-bolt {
+  .lightning-bolt,
+  .pearl-rain {
     position: fixed;
     inset: 0;
     pointer-events: none;
@@ -219,22 +233,34 @@
   }
 
   .matrix-rain {
-    opacity: 0.35;
+    opacity: 0.46;
     background-image:
-      linear-gradient(180deg, oklch(0.82 0.02 250 / 0%) 0%, oklch(0.82 0.02 250 / 50%) 45%, oklch(0.76 0.15 82 / 0%) 100%),
-      repeating-linear-gradient(90deg, transparent 0 38px, oklch(0.78 0.15 82 / 18%) 39px 40px, transparent 41px 88px);
-    background-size: 100% 220px, 88px 100%;
-    animation: rain-fall 1.8s linear infinite;
+      linear-gradient(180deg, oklch(0.9 0.025 245 / 0%) 0%, oklch(0.9 0.025 245 / 42%) 45%, oklch(0.79 0.16 86 / 0%) 100%),
+      repeating-linear-gradient(90deg, transparent 0 29px, oklch(0.79 0.16 86 / 20%) 30px 31px, transparent 32px 76px),
+      repeating-linear-gradient(90deg, transparent 0 54px, oklch(0.62 0.17 258 / 18%) 55px 57px, transparent 58px 118px);
+    background-size: 100% 240px, 76px 100%, 118px 100%;
+    animation: rain-fall 1.25s linear infinite;
   }
 
   .star-stream {
-    opacity: 0.65;
+    opacity: 0.82;
     background-image:
-      radial-gradient(circle, oklch(0.98 0.02 90 / 90%) 0 1px, transparent 2px),
-      radial-gradient(circle, oklch(0.72 0.16 258 / 70%) 0 1px, transparent 2px),
-      linear-gradient(100deg, transparent, oklch(0.82 0.02 250 / 16%), transparent);
-    background-size: 160px 90px, 230px 140px, 420px 100%;
-    animation: stars-flow 11s linear infinite;
+      radial-gradient(circle, oklch(0.98 0.02 90 / 95%) 0 1px, transparent 2px),
+      radial-gradient(circle, oklch(0.88 0.025 245 / 78%) 0 1px, transparent 2px),
+      radial-gradient(circle, oklch(0.58 0.105 58 / 70%) 0 1px, transparent 2px),
+      linear-gradient(100deg, transparent, oklch(0.82 0.02 250 / 20%), transparent);
+    background-size: 128px 82px, 210px 132px, 290px 190px, 420px 100%;
+    animation: stars-flow 8.5s linear infinite;
+  }
+
+  .pearl-rain {
+    opacity: 0.58;
+    background-image:
+      radial-gradient(ellipse, oklch(0.94 0.018 245 / 76%) 0 1px, transparent 2px),
+      radial-gradient(ellipse, oklch(0.79 0.16 86 / 66%) 0 1px, transparent 2px),
+      radial-gradient(ellipse, oklch(0.58 0.105 58 / 48%) 0 1.5px, transparent 3px);
+    background-size: 72px 160px, 116px 220px, 168px 260px;
+    animation: pearl-rain 2.7s linear infinite;
   }
 
   .lightning-bolt::after {
@@ -243,11 +269,25 @@
     inset: -20% 20% auto auto;
     width: 3px;
     height: 72vh;
-    background: linear-gradient(180deg, transparent, oklch(0.92 0.08 95 / 95%), transparent);
-    filter: blur(1px) drop-shadow(0 0 18px oklch(0.92 0.08 95));
+    background: linear-gradient(180deg, transparent, oklch(0.97 0.02 245 / 95%), oklch(0.8 0.16 86 / 84%), transparent);
+    filter: blur(1px) drop-shadow(0 0 22px oklch(0.9 0.04 245));
     transform: rotate(24deg);
     opacity: 0;
-    animation: lightning-flash 7s steps(1) infinite;
+    animation: lightning-flash 5.8s steps(1) infinite;
+  }
+
+  .glass-panel {
+    background: linear-gradient(135deg, color-mix(in oklab, var(--card) 88%, white 9%), color-mix(in oklab, var(--secondary) 82%, transparent));
+    border-color: color-mix(in oklab, var(--primary) 34%, var(--border));
+    box-shadow: var(--shadow-aura);
+    backdrop-filter: blur(18px) saturate(150%);
+  }
+
+  .metallic-text {
+    background: linear-gradient(92deg, var(--primary), var(--metal-silver), var(--metal-bronze), var(--primary));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
 
   @keyframes aura-shift {
@@ -261,8 +301,19 @@
   }
 
   @keyframes stars-flow {
-    from { background-position: 0 0, 0 0, -420px 0; }
-    to { background-position: 640px 360px, -460px 280px, 420px 0; }
+    from { background-position: 0 0, 0 0, 0 0, -420px 0; }
+    to { background-position: 640px 360px, -460px 280px, 380px 240px, 420px 0; }
+  }
+
+  @keyframes pearl-rain {
+    from { background-position: 0 -260px, 0 -220px, 0 -160px; }
+    to { background-position: 36px 260px, -58px 220px, 84px 160px; }
+  }
+
+  @keyframes glass-sheen {
+    from { transform: translateX(-18%); opacity: 0.46; }
+    50% { opacity: 0.8; }
+    to { transform: translateX(18%); opacity: 0.46; }
   }
 
   @keyframes lightning-flash {
