@@ -577,10 +577,26 @@ export function SignatureWorkspace({ role, variant = "role" }: WorkspaceProps) {
             <div className="mt-5 grid gap-4 md:grid-cols-2">
               {visibleModules.map((module) => (
                 <button key={module.slug} type="button" onClick={() => setSelectedModule(module.title)} className={`rounded-lg border p-5 text-left transition ${selectedModule === module.title ? "border-primary bg-primary/15 shadow-[var(--shadow-gold)]" : "border-border bg-background/60 hover:bg-accent"}`}>
-                  <p className="text-sm font-semibold">{module.title}</p>
+                  <div className="flex items-center justify-between gap-3"><p className="text-sm font-semibold">{module.title}</p><span className="rounded-md border border-border bg-background/60 px-2 py-1 text-[11px] font-medium text-muted-foreground">{roleSplitLabel(module)}</span></div>
                   <p className="mt-2 text-sm leading-6 text-muted-foreground">{module.public_summary || module.summary}</p>
                   <p className="mt-4 text-xs font-medium text-muted-foreground">Freigegeben: {(module.released_roles ?? []).map((item) => roleLabels[item]).join(", ") || "Noch nicht gesetzt"}</p>
                 </button>
+              ))}
+            </div>
+          </section>
+
+          <section className="rounded-lg border border-border bg-card/75 p-6 shadow-[var(--shadow-aura)] backdrop-blur">
+            <div className="flex items-center gap-3"><Eye className="h-5 w-5 text-primary" /><h2 className="text-xl font-semibold">Öffentliche Kurzversionen</h2></div>
+            <div className="mt-5 grid gap-3 md:grid-cols-2">
+              {publicShortModules.map((module) => (
+                <article key={module.slug} className="rounded-md border border-border bg-background/55 p-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="font-medium">{module.title}</p>
+                    <span className="rounded-md border border-border bg-card/70 px-2 py-1 text-[11px] text-muted-foreground">{roleSplitLabel(module)}</span>
+                  </div>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">{module.public_summary || module.summary}</p>
+                  <p className="mt-3 text-xs text-muted-foreground">Aktualisiert: {formatDate(module.public_teaser_updated_at ?? module.updated_at ?? null)}</p>
+                </article>
               ))}
             </div>
           </section>
@@ -637,29 +653,35 @@ export function SignatureWorkspace({ role, variant = "role" }: WorkspaceProps) {
               </section>
 
               <section className="rounded-lg border border-border bg-card/80 p-6 shadow-[var(--shadow-aura)] backdrop-blur">
-                <div className="flex items-center gap-3"><ShieldCheck className="h-5 w-5 text-primary" /><h2 className="text-xl font-semibold">Modul-Freigaben intern/extern</h2></div>
+                <div className="flex flex-wrap items-center justify-between gap-3"><div className="flex items-center gap-3"><ShieldCheck className="h-5 w-5 text-primary" /><h2 className="text-xl font-semibold">Modul-Freigaben intern/extern</h2></div><div className="rounded-md border border-border bg-background/55 px-3 py-2 text-xs text-muted-foreground">Änderungen aktualisieren die Kurzversion automatisch</div></div>
                 <div className="mt-5 space-y-4">
-                  {modules.map((module) => <div key={module.slug} className="rounded-md border border-border bg-background/55 p-4"><p className="font-medium">{module.title}</p><p className="mt-1 text-sm text-muted-foreground">Öffentlich: {module.public_summary || module.summary}</p><div className="mt-3 flex flex-wrap gap-2">{roles.map((item) => <button key={item} type="button" onClick={() => toggleRoleRelease(module, item)} className={`rounded-md border px-2 py-1 text-xs ${(module.released_roles ?? []).includes(item) ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-muted-foreground"}`}>{externalRoles.includes(item) ? "Extern" : "Intern"} · {roleLabels[item]}</button>)}</div></div>)}
+                  {modules.map((module) => <div key={module.slug} className="rounded-md border border-border bg-background/55 p-4"><div className="flex flex-wrap items-center justify-between gap-3"><p className="font-medium">{module.title}</p><span className="rounded-md border border-border bg-card/70 px-2 py-1 text-[11px] text-muted-foreground">{roleSplitLabel(module)}</span></div><p className="mt-1 text-sm text-muted-foreground">Öffentlich: {module.public_summary || module.summary}</p><div className="mt-3 flex flex-wrap gap-2">{roles.map((item) => <button key={item} type="button" onClick={() => toggleRoleRelease(module, item)} className={`rounded-md border px-2 py-1 text-xs ${(module.released_roles ?? []).includes(item) ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-muted-foreground"}`}>{externalRoles.includes(item) ? "Extern" : "Intern"} · {roleLabels[item]}</button>)}</div></div>)}
                 </div>
               </section>
 
               <section className="rounded-lg border border-border bg-card/80 p-6 shadow-[var(--shadow-aura)] backdrop-blur">
                 <div className="flex items-center gap-3"><CalendarClock className="h-5 w-5 text-primary" /><h2 className="text-xl font-semibold">Fälligkeiten & Overdue</h2></div>
                 <div className="mt-5 space-y-3">
-                  {assignments.slice(0, 8).map((assignment) => <div key={assignment.id} className="rounded-md border border-border bg-background/55 p-3"><p className="text-sm font-medium">{moduleTitleById.get(assignment.module_id) ?? "Modul"} · Nutzer {assignment.assigned_to.slice(0, 8)} · {assignment.status}</p><div className="mt-2 flex flex-wrap items-center gap-2"><input type="datetime-local" defaultValue={toDatetimeLocal(assignment.due_at)} onChange={(event) => setDueDate(assignment.id, event.target.value)} className="h-9 rounded-md border border-input bg-background/70 px-2 text-sm" /><span className="text-xs text-muted-foreground">{formatDate(assignment.due_at)}</span></div><Progress value={assignmentProgress(assignment.status)} className="mt-3" /></div>)}
+                  {assignments.slice(0, 8).map((assignment) => <div key={assignment.id} className="rounded-md border border-border bg-background/55 p-3"><div className="flex flex-wrap items-center justify-between gap-3"><p className="text-sm font-medium">{moduleTitleById.get(assignment.module_id) ?? "Modul"} · Nutzer {assignment.assigned_to.slice(0, 8)} · {assignment.status}</p>{assignment.status === "overdue" && <span className="rounded-md border border-destructive/50 bg-destructive/10 px-2 py-1 text-[11px] font-medium text-destructive">Overdue</span>}</div><div className="mt-3"><DueDateField value={dateDrafts[assignment.id]?.date ?? (assignment.due_at ? new Date(assignment.due_at) : undefined)} onDateChange={(date) => updateDateDraft(assignment.id, { date })} time={dateDrafts[assignment.id]?.time ?? (assignment.due_at ? new Date(assignment.due_at).toISOString().slice(11, 16) : "09:00")} onTimeChange={(value) => updateDateDraft(assignment.id, { time: value })} onSave={() => saveDateDraft(assignment.id)} /></div><div className="mt-2 flex items-center justify-between text-xs text-muted-foreground"><span>{formatDate(assignment.due_at)}</span><span>{assignmentProgress(assignment.status)}%</span></div><Progress value={assignmentProgress(assignment.status)} className="mt-3" /></div>)}
                 </div>
               </section>
 
               <section className="rounded-lg border border-border bg-card/80 p-6 shadow-[var(--shadow-aura)] backdrop-blur">
                 <div className="flex items-center gap-3"><UsersRound className="h-5 w-5 text-primary" /><h2 className="text-xl font-semibold">Admin Panel: Profile, Review, Lernkurve</h2></div>
                 <div className="mt-5 grid gap-3">
-                  {profiles.map((item) => { const userAssignments = assignments.filter((assignment) => assignment.assigned_to === item.user_id); const done = userAssignments.filter((assignment) => assignment.status === "signed").length; const value = userAssignments.length ? Math.round((done / userAssignments.length) * 100) : assignmentProgress(item.onboarding_status ?? "open"); return <div key={item.user_id} className="rounded-md border border-border bg-background/55 p-4"><p className="font-medium">{item.first_name || item.full_name} {item.last_name ?? ""}</p><p className="text-sm text-muted-foreground">Alter {item.age ?? "—"} · Telefon {item.phone ?? "—"} · LinkedIn {item.linkedin_url ?? "—"}</p><p className="mt-2 text-sm text-muted-foreground">{item.integration_request ?? "Kein Integration Request"}</p><div className="mt-3 flex items-center justify-between text-xs text-muted-foreground"><span>Lernkurve</span><span>{done}/{userAssignments.length || "—"} Module · {value}%</span></div><Progress value={value} className="mt-2" /></div>; })}
+                  {profileProgress.map(({ item, open, inProgress, overdue, signed, total, progress }) => <div key={item.user_id} className="rounded-md border border-border bg-background/55 p-4"><div className="flex flex-wrap items-start justify-between gap-3"><div><p className="font-medium">{item.first_name || item.full_name} {item.last_name ?? ""}</p><p className="text-sm text-muted-foreground">Alter {item.age ?? "—"} · Telefon {item.phone ?? "—"} · LinkedIn {item.linkedin_url ?? "—"}</p></div><div className="rounded-md border border-border bg-card/70 px-3 py-2 text-right text-xs text-muted-foreground"><div>{signed}/{total || 0} signiert</div><div>{progress}% Fortschritt</div></div></div><p className="mt-2 text-sm text-muted-foreground">{item.integration_request ?? "Kein Integration Request"}</p><div className="mt-3 grid gap-2 sm:grid-cols-4"><div className="rounded-md border border-border bg-card/60 p-2 text-xs text-muted-foreground"><div className="text-lg font-semibold text-foreground">{open}</div>Offen</div><div className="rounded-md border border-border bg-card/60 p-2 text-xs text-muted-foreground"><div className="text-lg font-semibold text-foreground">{inProgress}</div>In Arbeit</div><div className="rounded-md border border-border bg-card/60 p-2 text-xs text-muted-foreground"><div className="text-lg font-semibold text-foreground">{signed}</div>Signiert</div><div className="rounded-md border border-border bg-card/60 p-2 text-xs text-muted-foreground"><div className="text-lg font-semibold text-foreground">{overdue}</div>Overdue</div></div><div className="mt-3 flex items-center justify-between text-xs text-muted-foreground"><span>Lernkurve</span><span>{progress}%</span></div><Progress value={progress} className="mt-2" /></div>)}
                 </div>
                 <div className="mt-6 space-y-3">
-                  {forms.slice(0, 8).map((form) => <div key={form.id} className="rounded-md border border-border bg-background/55 p-4"><p className="font-medium">Formular {form.kind} · {form.review_status ?? form.status}</p><p className="text-sm text-muted-foreground">{formatDate(form.submitted_at)}</p><div className="mt-3 flex flex-wrap gap-2"><Button type="button" size="sm" variant="outline" onClick={() => updateFormReview(form.id, "in_review")}>Review</Button><Button type="button" size="sm" onClick={() => updateFormReview(form.id, "approved")}>Freigeben</Button><Button type="button" size="sm" variant="outline" onClick={() => updateFormReview(form.id, "changes_requested")}>Änderung</Button></div></div>)}
+                  {forms.slice(0, 8).map((form) => <div key={form.id} className="rounded-md border border-border bg-background/55 p-4"><div className="flex flex-wrap items-center justify-between gap-3"><p className="font-medium">Formular {form.kind} · {form.review_status ?? form.status}</p><span className="rounded-md border border-border bg-card/70 px-2 py-1 text-[11px] text-muted-foreground">{formatDate(form.submitted_at)}</span></div><p className="mt-2 text-sm text-muted-foreground">Statuswechsel und Review-Phase laufen direkt über das Management.</p><div className="mt-3 flex flex-wrap gap-2"><Button type="button" size="sm" variant="outline" onClick={() => updateFormReview(form.id, "in_review")}><RefreshCcw className="h-4 w-4" />Review</Button><Button type="button" size="sm" onClick={() => updateFormReview(form.id, "approved")}>Freigeben</Button><Button type="button" size="sm" variant="outline" onClick={() => updateFormReview(form.id, "changes_requested")}>Änderung</Button></div></div>)}
                 </div>
               </section>
             </>
+          )}
+
+          {!canManage && (
+            <section className="rounded-lg border border-border bg-card/75 p-5 shadow-[var(--shadow-aura)] backdrop-blur">
+              <div className="flex items-center gap-3 text-sm text-muted-foreground"><Lock className="h-4 w-4 text-primary" />CSV/PDF-Export, Modulfreigaben und Review-Steuerung sind nur für Admin/Management sichtbar.</div>
+            </section>
           )}
 
           <section className="rounded-lg border border-border bg-card/75 p-5 shadow-[var(--shadow-aura)] backdrop-blur">
