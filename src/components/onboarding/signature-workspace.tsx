@@ -1,14 +1,19 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent, type PointerEvent } from "react";
+import { format as formatDateFns } from "date-fns";
 import jsPDF from "jspdf";
 import {
   BarChart3,
   CalendarClock,
+  CalendarIcon,
   CheckCircle2,
   Clock3,
   Download,
+  Eye,
   FileSignature,
   FileText,
   ListChecks,
+  Lock,
+  RefreshCcw,
   ShieldCheck,
   Sparkles,
   UserRound,
@@ -17,7 +22,10 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Progress } from "@/components/ui/progress";
+import { cn } from "@/lib/utils";
 import { publicModules, roleJourneys, roleLabels, roleRoutes, type AppRole, type AssignmentStatus } from "@/lib/onboarding";
 
 type WorkspaceProps = {
@@ -143,6 +151,59 @@ function toDatetimeLocal(value?: string | null) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "";
   return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+}
+
+function DueDateField({
+  value,
+  onDateChange,
+  time,
+  onTimeChange,
+  onSave,
+}: {
+  value?: Date;
+  onDateChange: (date?: Date) => void;
+  time: string;
+  onTimeChange: (value: string) => void;
+  onSave: () => void;
+}) {
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            type="button"
+            variant="outline"
+            className={cn(
+              "min-w-52 justify-start bg-background/70 text-left font-normal",
+              !value && "text-muted-foreground",
+            )}
+          >
+            <CalendarIcon className="h-4 w-4" />
+            {value ? formatDateFns(value, "dd.MM.yyyy") : <span>Datum wählen</span>}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0" align="start">
+          <Calendar
+            mode="single"
+            selected={value}
+            onSelect={onDateChange}
+            initialFocus
+            className={cn("p-3 pointer-events-auto")}
+          />
+        </PopoverContent>
+      </Popover>
+
+      <input
+        type="time"
+        value={time}
+        onChange={(event) => onTimeChange(event.target.value)}
+        className="h-10 rounded-md border border-input bg-background/70 px-3 text-sm"
+      />
+      <Button type="button" size="sm" onClick={onSave}>
+        Speichern
+      </Button>
+    </div>
+  );
 }
 
 async function hashSignature(payload: string) {
