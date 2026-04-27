@@ -22,6 +22,7 @@ function Index() {
     <main className="aura-shell relative min-h-screen overflow-hidden bg-background text-foreground">
       <div className="matrix-rain" aria-hidden="true" />
       <div className="star-stream" aria-hidden="true" />
+      <div className="pearl-rain" aria-hidden="true" />
       <div className="lightning-bolt" aria-hidden="true" />
       <header className="relative border-b border-border bg-background/80 px-6 py-4 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
@@ -42,7 +43,7 @@ function Index() {
         <div className="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
           <div>
             <p className="inline-flex rounded-md border border-border bg-secondary px-3 py-1 text-sm font-medium text-secondary-foreground">Vision Style · Compliance · Assigned Management</p>
-            <h1 className="mt-6 max-w-4xl text-5xl font-semibold tracking-tight md:text-7xl">Onboarding, das Unternehmensregeln verständlich und nachweisbar macht.</h1>
+            <h1 className="metallic-text mt-6 max-w-4xl text-5xl font-semibold tracking-tight md:text-7xl">Onboarding, das Unternehmensregeln verständlich und nachweisbar macht.</h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">Kurze Themenmodule aus den Regulatorien, getrennte Rollenbereiche, Management-Status und rechtlich dokumentierte digitale Bestätigungen.</p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Button asChild size="lg"><Link to="/login">Login oder Zugang beantragen</Link></Button>
@@ -51,7 +52,7 @@ function Index() {
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             {managementMetrics.map((metric) => (
-              <div key={metric.label} className="rounded-lg border border-border bg-card/75 p-6 shadow-[var(--shadow-aura)] backdrop-blur">
+              <div key={metric.label} className="glass-panel rounded-lg border p-6">
                 <p className="text-sm text-muted-foreground">{metric.label}</p>
                 <p className="mt-3 text-4xl font-semibold">{metric.value}</p>
                 <p className="mt-2 text-sm text-muted-foreground">{metric.status}</p>
@@ -63,9 +64,9 @@ function Index() {
 
       <section className="relative border-y border-border bg-secondary/40 px-6 py-10 backdrop-blur">
         <div className="mx-auto grid max-w-7xl gap-4 md:grid-cols-3">
-          <div className="flex gap-4 rounded-lg border border-border bg-card p-5"><ShieldCheck className="h-6 w-6 text-primary" /><div><h2 className="font-semibold">Nur Kurzversion öffentlich</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">Sensibler Vollinhalt bleibt hinter Login und Rollenprüfung.</p></div></div>
-          <div className="flex gap-4 rounded-lg border border-border bg-card p-5"><FileSignature className="h-6 w-6 text-primary" /><div><h2 className="font-semibold">Signatur als sicherer Wert</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">Name, Rolle, Version, Bestätigung, Signaturdaten und Hash werden gespeichert.</p></div></div>
-          <div className="flex gap-4 rounded-lg border border-border bg-card p-5"><UsersRound className="h-6 w-6 text-primary" /><div><h2 className="font-semibold">Getrennte Rollenbereiche</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">Bewerber, Partner, Mitarbeiter, Kollegen, Team, Management und Admin.</p></div></div>
+          <div className="glass-panel flex gap-4 rounded-lg border p-5"><ShieldCheck className="h-6 w-6 text-primary" /><div><h2 className="font-semibold">Nur Kurzversion öffentlich</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">Sensibler Vollinhalt bleibt hinter Login und Rollenprüfung.</p></div></div>
+          <div className="glass-panel flex gap-4 rounded-lg border p-5"><FileSignature className="h-6 w-6 text-primary" /><div><h2 className="font-semibold">Signatur als sicherer Wert</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">Name, Rolle, Version, Bestätigung, Signaturdaten und Hash werden gespeichert.</p></div></div>
+          <div className="glass-panel flex gap-4 rounded-lg border p-5"><UsersRound className="h-6 w-6 text-primary" /><div><h2 className="font-semibold">Getrennte Rollenbereiche</h2><p className="mt-2 text-sm leading-6 text-muted-foreground">Bewerber, Partner, Mitarbeiter, Kollegen, Team, Management und Admin.</p></div></div>
         </div>
       </section>
 
