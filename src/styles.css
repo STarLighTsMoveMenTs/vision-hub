@@ -145,47 +145,52 @@
 
 @layer base {
   :root {
-    --background: oklch(0.13 0.05 265);
-    --foreground: oklch(0.96 0.015 90);
-    --card: oklch(0.19 0.045 258 / 86%);
-    --card-foreground: oklch(0.96 0.015 90);
-    --popover: oklch(0.17 0.045 258);
-    --popover-foreground: oklch(0.96 0.015 90);
-    --primary: oklch(0.76 0.15 82);
-    --primary-foreground: oklch(0.13 0.05 265);
-    --secondary: oklch(0.24 0.075 258 / 72%);
-    --secondary-foreground: oklch(0.93 0.04 88);
-    --muted: oklch(0.25 0.035 260 / 76%);
-    --muted-foreground: oklch(0.78 0.025 245);
-    --accent: oklch(0.45 0.13 260 / 55%);
-    --accent-foreground: oklch(0.98 0.015 90);
-    --destructive: oklch(0.62 0.2 28);
-    --destructive-foreground: oklch(0.98 0.015 90);
-    --border: oklch(0.76 0.08 85 / 28%);
-    --input: oklch(0.82 0.03 250 / 30%);
-    --ring: oklch(0.78 0.15 82);
-    --chart-1: oklch(0.7 0.16 82);
-    --chart-2: oklch(0.62 0.16 258);
-    --chart-3: oklch(0.82 0.02 250);
-    --chart-4: oklch(0.54 0.09 55);
-    --chart-5: oklch(0.36 0.04 260);
-    --sidebar: oklch(0.16 0.05 260);
-    --sidebar-foreground: oklch(0.96 0.015 90);
-    --sidebar-primary: oklch(0.76 0.15 82);
-    --sidebar-primary-foreground: oklch(0.13 0.05 265);
-    --sidebar-accent: oklch(0.27 0.07 260);
-    --sidebar-accent-foreground: oklch(0.96 0.015 90);
-    --sidebar-border: oklch(0.76 0.08 85 / 25%);
-    --sidebar-ring: oklch(0.78 0.15 82);
-    --shadow-aura: 0 18px 55px -24px color-mix(in oklab, var(--primary) 55%, transparent), inset 0 1px 0 color-mix(in oklab, white 16%, transparent);
-    --shadow-gold: 0 0 32px color-mix(in oklab, var(--primary) 28%, transparent);
+    --background: oklch(0.16 0.12 263);
+    --foreground: oklch(0.97 0.018 92);
+    --card: oklch(0.23 0.105 262 / 58%);
+    --card-foreground: oklch(0.98 0.014 94);
+    --popover: oklch(0.2 0.09 263 / 86%);
+    --popover-foreground: oklch(0.98 0.014 94);
+    --primary: oklch(0.79 0.16 86);
+    --primary-foreground: oklch(0.14 0.09 263);
+    --secondary: oklch(0.3 0.12 263 / 58%);
+    --secondary-foreground: oklch(0.91 0.055 90);
+    --muted: oklch(0.31 0.075 264 / 58%);
+    --muted-foreground: oklch(0.84 0.035 245);
+    --accent: oklch(0.62 0.17 258 / 50%);
+    --accent-foreground: oklch(0.99 0.012 90);
+    --destructive: oklch(0.63 0.21 28);
+    --destructive-foreground: oklch(0.99 0.012 90);
+    --border: oklch(0.82 0.08 88 / 34%);
+    --input: oklch(0.88 0.035 245 / 32%);
+    --ring: oklch(0.82 0.14 88);
+    --chart-1: oklch(0.8 0.16 86);
+    --chart-2: oklch(0.74 0.06 248);
+    --chart-3: oklch(0.58 0.1 58);
+    --chart-4: oklch(0.66 0.17 258);
+    --chart-5: oklch(0.28 0.06 262);
+    --sidebar: oklch(0.18 0.1 263 / 80%);
+    --sidebar-foreground: oklch(0.98 0.014 94);
+    --sidebar-primary: oklch(0.79 0.16 86);
+    --sidebar-primary-foreground: oklch(0.14 0.09 263);
+    --sidebar-accent: oklch(0.34 0.12 263 / 70%);
+    --sidebar-accent-foreground: oklch(0.98 0.014 94);
+    --sidebar-border: oklch(0.82 0.08 88 / 30%);
+    --sidebar-ring: oklch(0.82 0.14 88);
+    --metal-silver: oklch(0.88 0.025 245);
+    --metal-bronze: oklch(0.58 0.105 58);
+    --eu-blue: oklch(0.32 0.18 263);
+    --shadow-aura: 0 24px 80px -24px color-mix(in oklab, var(--accent) 62%, transparent), 0 0 44px color-mix(in oklab, var(--primary) 18%, transparent), inset 0 1px 0 color-mix(in oklab, white 24%, transparent);
+    --shadow-gold: 0 0 38px color-mix(in oklab, var(--primary) 38%, transparent), inset 0 0 24px color-mix(in oklab, var(--primary) 8%, transparent);
   }
 
   body {
     background:
-      radial-gradient(circle at 20% 15%, oklch(0.55 0.16 258 / 34%), transparent 28rem),
-      radial-gradient(circle at 78% 8%, oklch(0.74 0.14 82 / 30%), transparent 24rem),
-      linear-gradient(135deg, oklch(0.08 0.04 265), oklch(0.16 0.06 252) 52%, oklch(0.09 0.03 260));
+      radial-gradient(circle at 14% 9%, oklch(0.68 0.17 86 / 34%), transparent 26rem),
+      radial-gradient(circle at 82% 10%, oklch(0.86 0.025 245 / 24%), transparent 25rem),
+      radial-gradient(circle at 50% 115%, oklch(0.58 0.105 58 / 32%), transparent 34rem),
+      linear-gradient(135deg, oklch(0.1 0.1 264), oklch(0.25 0.16 263) 46%, oklch(0.08 0.07 262));
+    min-height: 100vh;
   }
 }
 
