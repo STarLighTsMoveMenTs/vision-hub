@@ -494,8 +494,13 @@ export function SignatureWorkspace({ role, variant = "role" }: WorkspaceProps) {
   };
 
   const saveDateDraft = async (assignmentId: string) => {
-    const draft = dateDrafts[assignmentId];
-    if (!draft?.date) {
+    const assignment = assignments.find((item) => item.id === assignmentId);
+    const draft = dateDrafts[assignmentId] ?? {
+      date: assignment?.due_at ? new Date(assignment.due_at) : undefined,
+      time: assignment?.due_at ? new Date(assignment.due_at).toISOString().slice(11, 16) : "09:00",
+    };
+
+    if (!draft.date) {
       await setDueDate(assignmentId, "");
       return;
     }
