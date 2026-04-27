@@ -517,6 +517,7 @@ export function SignatureWorkspace({ role, variant = "role" }: WorkspaceProps) {
     <main className="aura-shell relative min-h-screen overflow-hidden bg-background text-foreground">
       <div className="matrix-rain" aria-hidden="true" />
       <div className="star-stream" aria-hidden="true" />
+      <div className="pearl-rain" aria-hidden="true" />
       <div className="lightning-bolt" aria-hidden="true" />
 
       <section className="relative border-b border-border/70 bg-secondary/45 px-6 py-8 backdrop-blur-xl">
