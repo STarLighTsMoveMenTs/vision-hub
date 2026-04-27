@@ -131,6 +131,20 @@ function csvEscape(value: unknown) {
   return `"${text.replaceAll('"', '""')}"`;
 }
 
+function assignmentProgress(status: AssignmentStatus) {
+  if (status === "signed") return 100;
+  if (status === "in_progress") return 55;
+  if (status === "overdue") return 20;
+  return 10;
+}
+
+function toDatetimeLocal(value?: string | null) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+}
+
 async function hashSignature(payload: string) {
   const bytes = new TextEncoder().encode(payload);
   const hash = await crypto.subtle.digest("SHA-256", bytes);
@@ -166,6 +180,8 @@ export function SignatureWorkspace({ role, variant = "role" }: WorkspaceProps) {
     return modules.filter((module) => module.released_roles?.includes(role) || module.audience_roles?.includes(role) || module.audience?.includes(roleLabels[role]) || module.audience?.includes("Alle Rollen"));
   }, [canManage, modules, role]);
 
+  const moduleTitleById = useMemo(() => new Map(modules.filter((module) => module.id).map((module) => [module.id as string, module.title])), [modules]);
+
   const ownAssignments = userId ? assignments.filter((assignment) => assignment.assigned_to === userId) : assignments;
   const signedCount = ownAssignments.filter((assignment) => assignment.status === "signed").length + signatures.filter((signature) => signature.user_id === userId).length;
   const openCount = ownAssignments.filter((assignment) => assignment.status === "open").length;
@@ -177,6 +193,8 @@ export function SignatureWorkspace({ role, variant = "role" }: WorkspaceProps) {
     const { data: sessionData } = await supabase.auth.getSession();
     const user = sessionData.session?.user;
     setUserId(user?.id ?? null);
+
+    await (supabase.rpc("refresh_overdue_assignments") as any);
 
     const [{ data: moduleData }, { data: signatureData }, { data: assignmentData }, { data: profileData }, { data: formData }] = await Promise.all([
       (supabase.from("onboarding_modules") as any).select("*").order("title"),
@@ -329,7 +347,10 @@ export function SignatureWorkspace({ role, variant = "role" }: WorkspaceProps) {
   const toggleRoleRelease = async (module: ModuleRecord, releaseRole: AppRole) => {
     if (!module.id) return;
     const nextRoles = module.released_roles?.includes(releaseRole) ? module.released_roles.filter((item) => item !== releaseRole) : [...(module.released_roles ?? []), releaseRole];
-    const { error } = await (supabase.from("onboarding_modules") as any).update({ released_roles: nextRoles, is_public_teaser: true, public_summary: module.public_summary || module.summary }).eq("id", module.id);
+    const hasInternal = nextRoles.some((item) => !externalRoles.includes(item));
+    const hasExternal = nextRoles.some((item) => externalRoles.includes(item));
+    const visibility_scope = hasInternal && hasExternal ? "both" : hasExternal ? "external" : "internal";
+    const { error } = await (supabase.from("onboarding_modules") as any).update({ released_roles: nextRoles, visibility_scope, is_public_teaser: true, public_summary: module.summary.slice(0, 220) }).eq("id", module.id);
     if (error) return setMessage(error.message);
     setMessage("Modul-Freigabe aktualisiert. Die öffentliche Kurzversion wurde synchronisiert.");
     await loadData();
@@ -363,14 +384,15 @@ export function SignatureWorkspace({ role, variant = "role" }: WorkspaceProps) {
     doc.setFontSize(9);
     doc.text(`Erstellt: ${formatDate(new Date().toISOString())}`, 14, 24);
     let y = 34;
-    signatures.slice(0, 28).forEach((signature, index) => {
+    signatures.forEach((signature, index) => {
       if (y > 185) {
         doc.addPage("landscape");
         y = 18;
       }
       doc.text(`${index + 1}. ${formatDate(signature.signed_at)} · ${signature.signer_name} · ${roleLabels[signature.signer_role]} · ${signature.signed_content_title}`, 14, y);
       doc.text(`Hash: ${signature.signature_hash.slice(0, 86)}`, 14, y + 5);
-      y += 12;
+      doc.text(`Audit: ${JSON.stringify(signature.audit_data).slice(0, 130)}`, 14, y + 10);
+      y += 16;
     });
     doc.save(`signaturen-audit-${new Date().toISOString().slice(0, 10)}.pdf`);
   };
@@ -431,8 +453,8 @@ export function SignatureWorkspace({ role, variant = "role" }: WorkspaceProps) {
             <div className="mt-5 space-y-3">
               {ownAssignments.slice(0, 5).map((assignment) => (
                 <div key={assignment.id} className="flex flex-col gap-3 rounded-md border border-border bg-background/55 p-4 md:flex-row md:items-center md:justify-between">
-                  <div><p className="font-medium">Zuweisung {assignment.module_id.slice(0, 8)}</p><p className="text-sm text-muted-foreground">Status {assignment.status} · Fällig {formatDate(assignment.due_at)}</p></div>
-                  <Progress value={assignment.status === "signed" ? 100 : assignment.status === "in_progress" ? 55 : assignment.status === "overdue" ? 20 : 10} className="md:w-48" />
+                  <div><p className="font-medium">{moduleTitleById.get(assignment.module_id) ?? `Zuweisung ${assignment.module_id.slice(0, 8)}`}</p><p className="text-sm text-muted-foreground">Status {assignment.status} · Fällig {formatDate(assignment.due_at)}</p></div>
+                  <Progress value={assignmentProgress(assignment.status)} className="md:w-48" />
                 </div>
               ))}
             </div>
@@ -512,14 +534,14 @@ export function SignatureWorkspace({ role, variant = "role" }: WorkspaceProps) {
               <section className="rounded-lg border border-border bg-card/80 p-6 shadow-[var(--shadow-aura)] backdrop-blur">
                 <div className="flex items-center gap-3"><CalendarClock className="h-5 w-5 text-primary" /><h2 className="text-xl font-semibold">Fälligkeiten & Overdue</h2></div>
                 <div className="mt-5 space-y-3">
-                  {assignments.slice(0, 8).map((assignment) => <div key={assignment.id} className="rounded-md border border-border bg-background/55 p-3"><p className="text-sm font-medium">Nutzer {assignment.assigned_to.slice(0, 8)} · {assignment.status}</p><div className="mt-2 flex items-center gap-2"><input type="datetime-local" onChange={(event) => setDueDate(assignment.id, event.target.value)} className="h-9 rounded-md border border-input bg-background/70 px-2 text-sm" /><span className="text-xs text-muted-foreground">{formatDate(assignment.due_at)}</span></div></div>)}
+                  {assignments.slice(0, 8).map((assignment) => <div key={assignment.id} className="rounded-md border border-border bg-background/55 p-3"><p className="text-sm font-medium">{moduleTitleById.get(assignment.module_id) ?? "Modul"} · Nutzer {assignment.assigned_to.slice(0, 8)} · {assignment.status}</p><div className="mt-2 flex flex-wrap items-center gap-2"><input type="datetime-local" defaultValue={toDatetimeLocal(assignment.due_at)} onChange={(event) => setDueDate(assignment.id, event.target.value)} className="h-9 rounded-md border border-input bg-background/70 px-2 text-sm" /><span className="text-xs text-muted-foreground">{formatDate(assignment.due_at)}</span></div><Progress value={assignmentProgress(assignment.status)} className="mt-3" /></div>)}
                 </div>
               </section>
 
               <section className="rounded-lg border border-border bg-card/80 p-6 shadow-[var(--shadow-aura)] backdrop-blur">
                 <div className="flex items-center gap-3"><UsersRound className="h-5 w-5 text-primary" /><h2 className="text-xl font-semibold">Admin Panel: Profile, Review, Lernkurve</h2></div>
                 <div className="mt-5 grid gap-3">
-                  {profiles.map((item) => <div key={item.user_id} className="rounded-md border border-border bg-background/55 p-4"><p className="font-medium">{item.first_name || item.full_name} {item.last_name ?? ""}</p><p className="text-sm text-muted-foreground">Alter {item.age ?? "—"} · Telefon {item.phone ?? "—"} · LinkedIn {item.linkedin_url ?? "—"}</p><p className="mt-2 text-sm text-muted-foreground">{item.integration_request ?? "Kein Integration Request"}</p><Progress value={item.onboarding_status === "signed" ? 100 : item.onboarding_status === "in_progress" ? 55 : 15} className="mt-3" /></div>)}
+                  {profiles.map((item) => { const userAssignments = assignments.filter((assignment) => assignment.assigned_to === item.user_id); const done = userAssignments.filter((assignment) => assignment.status === "signed").length; const value = userAssignments.length ? Math.round((done / userAssignments.length) * 100) : assignmentProgress(item.onboarding_status ?? "open"); return <div key={item.user_id} className="rounded-md border border-border bg-background/55 p-4"><p className="font-medium">{item.first_name || item.full_name} {item.last_name ?? ""}</p><p className="text-sm text-muted-foreground">Alter {item.age ?? "—"} · Telefon {item.phone ?? "—"} · LinkedIn {item.linkedin_url ?? "—"}</p><p className="mt-2 text-sm text-muted-foreground">{item.integration_request ?? "Kein Integration Request"}</p><div className="mt-3 flex items-center justify-between text-xs text-muted-foreground"><span>Lernkurve</span><span>{done}/{userAssignments.length || "—"} Module · {value}%</span></div><Progress value={value} className="mt-2" /></div>; })}
                 </div>
                 <div className="mt-6 space-y-3">
                   {forms.slice(0, 8).map((form) => <div key={form.id} className="rounded-md border border-border bg-background/55 p-4"><p className="font-medium">Formular {form.kind} · {form.review_status ?? form.status}</p><p className="text-sm text-muted-foreground">{formatDate(form.submitted_at)}</p><div className="mt-3 flex flex-wrap gap-2"><Button type="button" size="sm" variant="outline" onClick={() => updateFormReview(form.id, "in_review")}>Review</Button><Button type="button" size="sm" onClick={() => updateFormReview(form.id, "approved")}>Freigeben</Button><Button type="button" size="sm" variant="outline" onClick={() => updateFormReview(form.id, "changes_requested")}>Änderung</Button></div></div>)}
