@@ -231,6 +231,7 @@ export function SignatureWorkspace({ role, variant = "role" }: WorkspaceProps) {
   const [loading, setLoading] = useState(true);
   const [intake, setIntake] = useState({ firstName: "", lastName: "", age: "", linkedin: "", phone: "", request: "" });
   const [formText, setFormText] = useState("");
+  const [dateDrafts, setDateDrafts] = useState<Record<string, { date?: Date; time: string }>>({});
 
   const canManage = variant === "admin" || variant === "management";
   const selectedModuleRecord = modules.find((item) => item.title === selectedModule) ?? modules[0];
@@ -459,6 +460,51 @@ export function SignatureWorkspace({ role, variant = "role" }: WorkspaceProps) {
   };
 
   const dashboardItems = statusMap.map((item) => ({ ...item, count: ownAssignments.filter((assignment) => assignment.status === item.value).length + (item.value === "signed" ? signatures.filter((signature) => signature.user_id === userId).length : 0) }));
+  const profileProgress = useMemo(() => profiles.map((item) => {
+    const userAssignments = assignments.filter((assignment) => assignment.assigned_to === item.user_id);
+    const open = userAssignments.filter((assignment) => assignment.status === "open").length;
+    const inProgress = userAssignments.filter((assignment) => assignment.status === "in_progress").length;
+    const overdue = userAssignments.filter((assignment) => assignment.status === "overdue").length;
+    const signed = userAssignments.filter((assignment) => assignment.status === "signed").length;
+    const total = userAssignments.length;
+    const progress = total ? Math.round((signed / total) * 100) : assignmentProgress(item.onboarding_status ?? "open");
+
+    return { item, open, inProgress, overdue, signed, total, progress };
+  }), [assignments, profiles]);
+
+  const publicShortModules = useMemo(() => modules.filter((module) => module.is_public_teaser), [modules]);
+
+  const roleSplitLabel = (module: ModuleRecord) => {
+    if (module.visibility_scope === "both") return "Intern + extern";
+    if (module.visibility_scope === "external") return "Nur extern";
+    return "Nur intern";
+  };
+
+  const updateDateDraft = (assignmentId: string, next: Partial<{ date?: Date; time: string }>) => {
+    setDateDrafts((current) => ({
+      ...current,
+      [assignmentId]: {
+        date: next.date ?? current[assignmentId]?.date ?? (assignments.find((assignment) => assignment.id === assignmentId)?.due_at ? new Date(assignments.find((assignment) => assignment.id === assignmentId)?.due_at as string) : undefined),
+        time: next.time ?? current[assignmentId]?.time ?? (() => {
+          const currentDueAt = assignments.find((assignment) => assignment.id === assignmentId)?.due_at;
+          return currentDueAt ? new Date(currentDueAt).toISOString().slice(11, 16) : "09:00";
+        })(),
+      },
+    }));
+  };
+
+  const saveDateDraft = async (assignmentId: string) => {
+    const draft = dateDrafts[assignmentId];
+    if (!draft?.date) {
+      await setDueDate(assignmentId, "");
+      return;
+    }
+
+    const nextDate = new Date(draft.date);
+    const [hours, minutes] = (draft.time || "09:00").split(":").map((value) => Number(value));
+    nextDate.setHours(Number.isFinite(hours) ? hours : 9, Number.isFinite(minutes) ? minutes : 0, 0, 0);
+    await setDueDate(assignmentId, toDatetimeLocal(nextDate.toISOString()));
+  };
 
   return (
     <main className="aura-shell relative min-h-screen overflow-hidden bg-background text-foreground">
