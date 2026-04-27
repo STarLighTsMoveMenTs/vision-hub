@@ -131,6 +131,20 @@ function csvEscape(value: unknown) {
   return `"${text.replaceAll('"', '""')}"`;
 }
 
+function assignmentProgress(status: AssignmentStatus) {
+  if (status === "signed") return 100;
+  if (status === "in_progress") return 55;
+  if (status === "overdue") return 20;
+  return 10;
+}
+
+function toDatetimeLocal(value?: string | null) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+}
+
 async function hashSignature(payload: string) {
   const bytes = new TextEncoder().encode(payload);
   const hash = await crypto.subtle.digest("SHA-256", bytes);
@@ -166,6 +180,8 @@ export function SignatureWorkspace({ role, variant = "role" }: WorkspaceProps) {
     return modules.filter((module) => module.released_roles?.includes(role) || module.audience_roles?.includes(role) || module.audience?.includes(roleLabels[role]) || module.audience?.includes("Alle Rollen"));
   }, [canManage, modules, role]);
 
+  const moduleTitleById = useMemo(() => new Map(modules.filter((module) => module.id).map((module) => [module.id as string, module.title])), [modules]);
+
   const ownAssignments = userId ? assignments.filter((assignment) => assignment.assigned_to === userId) : assignments;
   const signedCount = ownAssignments.filter((assignment) => assignment.status === "signed").length + signatures.filter((signature) => signature.user_id === userId).length;
   const openCount = ownAssignments.filter((assignment) => assignment.status === "open").length;
@@ -177,6 +193,8 @@ export function SignatureWorkspace({ role, variant = "role" }: WorkspaceProps) {
     const { data: sessionData } = await supabase.auth.getSession();
     const user = sessionData.session?.user;
     setUserId(user?.id ?? null);
+
+    await (supabase.rpc("refresh_overdue_assignments") as any);
 
     const [{ data: moduleData }, { data: signatureData }, { data: assignmentData }, { data: profileData }, { data: formData }] = await Promise.all([
       (supabase.from("onboarding_modules") as any).select("*").order("title"),
@@ -329,7 +347,10 @@ export function SignatureWorkspace({ role, variant = "role" }: WorkspaceProps) {
   const toggleRoleRelease = async (module: ModuleRecord, releaseRole: AppRole) => {
     if (!module.id) return;
     const nextRoles = module.released_roles?.includes(releaseRole) ? module.released_roles.filter((item) => item !== releaseRole) : [...(module.released_roles ?? []), releaseRole];
-    const { error } = await (supabase.from("onboarding_modules") as any).update({ released_roles: nextRoles, is_public_teaser: true, public_summary: module.public_summary || module.summary }).eq("id", module.id);
+    const hasInternal = nextRoles.some((item) => !externalRoles.includes(item));
+    const hasExternal = nextRoles.some((item) => externalRoles.includes(item));
+    const visibility_scope = hasInternal && hasExternal ? "both" : hasExternal ? "external" : "internal";
+    const { error } = await (supabase.from("onboarding_modules") as any).update({ released_roles: nextRoles, visibility_scope, is_public_teaser: true, public_summary: module.summary.slice(0, 220) }).eq("id", module.id);
     if (error) return setMessage(error.message);
     setMessage("Modul-Freigabe aktualisiert. Die öffentliche Kurzversion wurde synchronisiert.");
     await loadData();
@@ -363,14 +384,15 @@ export function SignatureWorkspace({ role, variant = "role" }: WorkspaceProps) {
     doc.setFontSize(9);
     doc.text(`Erstellt: ${formatDate(new Date().toISOString())}`, 14, 24);
     let y = 34;
-    signatures.slice(0, 28).forEach((signature, index) => {
+    signatures.forEach((signature, index) => {
       if (y > 185) {
         doc.addPage("landscape");
         y = 18;
       }
       doc.text(`${index + 1}. ${formatDate(signature.signed_at)} · ${signature.signer_name} · ${roleLabels[signature.signer_role]} · ${signature.signed_content_title}`, 14, y);
       doc.text(`Hash: ${signature.signature_hash.slice(0, 86)}`, 14, y + 5);
-      y += 12;
+      doc.text(`Audit: ${JSON.stringify(signature.audit_data).slice(0, 130)}`, 14, y + 10);
+      y += 16;
     });
     doc.save(`signaturen-audit-${new Date().toISOString().slice(0, 10)}.pdf`);
   };
