@@ -79,9 +79,13 @@ export function AuthPanel() {
   };
 
   return (
-    <main className="min-h-screen bg-background px-6 py-8 text-foreground">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 lg:flex-row lg:items-stretch">
-        <section className="flex flex-1 flex-col justify-between rounded-lg border border-border bg-card p-8 shadow-sm">
+    <main className="aura-shell relative min-h-screen overflow-hidden bg-background px-6 py-8 text-foreground">
+      <div className="matrix-rain" aria-hidden="true" />
+      <div className="star-stream" aria-hidden="true" />
+      <div className="pearl-rain" aria-hidden="true" />
+      <div className="lightning-bolt" aria-hidden="true" />
+      <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-8 lg:flex-row lg:items-stretch">
+        <section className="glass-panel flex flex-1 flex-col justify-between rounded-lg border p-8">
           <div>
             <Link to="/" className="text-sm font-medium text-muted-foreground hover:text-foreground">
               Zurück zur Übersicht
@@ -89,7 +93,7 @@ export function AuthPanel() {
             <div className="mt-14 flex h-14 w-14 items-center justify-center rounded-md bg-primary text-primary-foreground">
               <ShieldCheck className="h-7 w-7" />
             </div>
-            <h1 className="mt-6 text-4xl font-semibold tracking-tight">Sicherer Onboarding-Zugang</h1>
+            <h1 className="metallic-text mt-6 text-4xl font-semibold tracking-tight">Sicherer Onboarding-Zugang</h1>
             <p className="mt-4 max-w-xl text-base leading-7 text-muted-foreground">
               Getrennte Bereiche für Bewerber, Partner, Mitarbeiter, Kollegen, Teams, Management und Admin. Rollen werden nach Registrierung administrativ bestätigt.
             </p>
@@ -102,7 +106,7 @@ export function AuthPanel() {
           </div>
         </section>
 
-        <section className="w-full rounded-lg border border-border bg-card p-6 shadow-sm lg:max-w-md">
+        <section className="glass-panel w-full rounded-lg border p-6 lg:max-w-md">
           <div className="grid grid-cols-2 rounded-md bg-muted p-1">
             <button type="button" onClick={() => setMode("login")} className={`rounded-md px-3 py-2 text-sm font-medium ${mode === "login" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground"}`}>
               Login
